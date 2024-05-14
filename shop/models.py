@@ -1,5 +1,4 @@
 from django.db import models
-
 from django.urls import reverse
 
 
@@ -24,8 +23,8 @@ class Category(models.Model):
 
 class Product(models.Model):
     category = models.ManyToManyField(Category, related_name='products')
-    name = models.CharField(max_length=200)
-    slug = models.SlugField(max_length=200)
+    name = models.CharField(max_length=100)
+    slug = models.SlugField(max_length=20)
     image = models.ImageField(upload_to='products/%Y/%b/%d/')
     description = models.TextField()
     price = models.IntegerField()
