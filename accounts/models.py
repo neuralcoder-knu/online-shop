@@ -3,15 +3,6 @@ from django.contrib.auth.models import AbstractBaseUser
 
 from accounts.managers import OnlineShopUserManager
 
-
-def has_perm(perm, obj=None):
-    return True
-
-
-def has_module_perms(app_label):
-    return True
-
-
 class User(AbstractBaseUser):
     email = models.EmailField(max_length=100, unique=True)
     full_name = models.CharField(max_length=100)
@@ -30,3 +21,9 @@ class User(AbstractBaseUser):
     @property
     def is_staff(self):
         return self.is_admin
+
+    def has_perm(self, perm, obj=None):
+        return True
+
+    def has_module_perms(self, app_label):
+        return True

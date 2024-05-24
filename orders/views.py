@@ -11,6 +11,7 @@ from suds import Client
 from cart.utils.cart import Cart
 from orders.forms import CouponForm
 from orders.models import Order, OrderItem, Coupon
+from shop.models import Product, Category
 
 
 @login_required()
@@ -30,40 +31,16 @@ def detail(request, order_id):
     return render(request, 'orders/order.html', {'order': order, 'form': form})
 
 
-MERCHANT = 'XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX'
-client = Client('https://www.zarinpal.com/pg/services/WebGate/wsdl')
-description = "پرداخت رضا"  # Required
-mobile = '09335668353'  # Optional
-CallbackURL = 'http://localhost:8000/orders/verify/'  # Important: need to edit for realy server.
-
-
 @login_required()
 def payment(request, order_id, price):
     global amount, o_id
-    amount = price
-    result = client.service.PaymentRequest(MERCHANT, amount, description, request.user.email, mobile, CallbackURL)
-    if result.Status == 100:
-        return redirect('https://www.zarinpal.com/pg/StartPay/' + str(result.Authority))
-    else:
-        return HttpResponse('Error code: ' + str(result.Status))
-
-
-@login_required()
-def verify(request):
-    if request.GET.get('Status') == 'OK':
-        result = client.service.PaymentVerification(MERCHANT, request.GET['Authority'], amount)
-        if result.Status == 100:
-            order = Order.objects.get(id=o_id)
-            order.status = True
-            order.save()
-            messages.success(request, 'Transaction was successfully', 'success')
-            return HttpResponse('Transaction success.\nRefID: ' + str(result.RefID))
-        elif result.Status == 101:
-            return HttpResponse('Transaction submitted : ' + str(result.Status))
-        else:
-            return HttpResponse('Transaction failed.\nStatus: ' + str(result.Status))
-    else:
-        return HttpResponse('Transaction failed or canceled by user')
+    order = Order.objects.get(id=order_id)
+    order.status = True
+    order.save()
+    messages.success(request, 'Замовлення створено!', 'success')
+    products = Product.objects.filter(status=True)
+    categories = Category.objects.filter()
+    return render(request, 'shop/home.html', {'products': products, 'categories': categories})
 
 
 @require_POST

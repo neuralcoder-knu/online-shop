@@ -1,8 +1,6 @@
 from django import forms
 from accounts.models import User
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
-from util.encoder import encode_md5
-
 
 class UserCreationForm(forms.ModelForm):
     password = forms.CharField(label='Password', widget=forms.PasswordInput(attrs={'class': 'form-control'}))
@@ -12,7 +10,7 @@ class UserCreationForm(forms.ModelForm):
         fields = ('email', 'full_name', 'phone_number')
 
     def save(self, commit=True):
-        encoded_password = encode_md5(self.cleaned_data["password"])
+        encoded_password = self.cleaned_data["password"]
 
         user = super().save(commit=False)
         user.set_password(encoded_password)

@@ -4,8 +4,6 @@ from django.contrib.auth import authenticate, login, logout
 
 from accounts.forms import UserLoginForm, UserRegistrationForm
 from accounts.models import User
-from util.encoder import encode_md5
-
 
 def user_login(request):
     if request.method == 'POST':
@@ -15,7 +13,7 @@ def user_login(request):
             data = form.cleaned_data
 
             password = data['password']
-            encoded_password = encode_md5(password)
+            encoded_password = password
             email = data['email']
 
             user = authenticate(request, email=email, password=encoded_password)

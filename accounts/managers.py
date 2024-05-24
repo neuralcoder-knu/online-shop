@@ -1,8 +1,5 @@
 from django.contrib.auth.models import BaseUserManager
 
-from util.encoder import encode_md5
-
-
 class OnlineShopUserManager(BaseUserManager):
     def create_user(self, email, full_name, phone_number, password):
         if not email:
@@ -12,7 +9,7 @@ class OnlineShopUserManager(BaseUserManager):
 
         user = self.model(email=self.normalize_email(email), phone_number=phone_number, full_name=full_name)
 
-        encoded_password = encode_md5(password)
+        encoded_password = password
 
         user.set_password(encoded_password)
         user.save(using=self._db)
