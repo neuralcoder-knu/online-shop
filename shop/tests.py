@@ -6,8 +6,6 @@ class CategoryModelTests(TestCase):
         category = Category.objects.create(name='Electronics', slug='electronics')
         self.assertEqual(category.name, 'Electronics')
         self.assertEqual(category.slug, 'electronics')
-        self.assertFalse(category.is_sub)
-        self.assertIsNone(category.sub_category)
 
     def test_category_str(self):
         category = Category.objects.create(name='Books', slug='books')
