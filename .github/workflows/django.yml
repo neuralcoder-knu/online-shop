@@ -29,14 +29,25 @@ jobs:
         python manage.py test
         
   deploy:
-    name: Deploy to Heroku
     needs: build
     runs-on: ubuntu-latest
 
     steps:
-    - name: Deploy to Heroku
-      uses: akhileshns/heroku-deploy@v3.12.12
+    - name: Checkout code
+      uses: actions/checkout@v2
       with:
-        heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
-        heroku_app_name:  ${{ secrets.HEROKU_EMAIL }}
-        heroku_email:  ${{ secrets.HEROKU_PASS }}
+        fetch-depth: 0
+
+    - name: Login to Heroku
+      env:
+        HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+      run: |
+        echo "machine api.heroku.com" > ~/.netrc
+        echo "  login ${{ secrets.HEROKU_EMAIL }}" >> ~/.netrc
+        echo "  password ${{ secrets.HEROKU_API_KEY }}" >> ~/.netrc
+        echo "machine git.heroku.com" >> ~/.netrc
+        echo "  login ${{ secrets.HEROKU_EMAIL }}" >> ~/.netrc
+        echo "  password ${{ secrets.HEROKU_API_KEY }}" >> ~/.netrc
+
+    - name: Deploy to Heroku
+      run: git push https://git.heroku.com/${{ secrets.HEROKU_APP_NAME }}.git HEAD:main
